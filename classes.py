@@ -1,9 +1,15 @@
 from abc import ABC, abstractmethod
 
-
 class Usuario:
+    contador = 0
+
+    @classmethod
+    def incremento(cls):
+        cls.contador += 1
+        return cls.contador
+
     def __init__(self, id, nome, email, senha, idade):
-        self.id = id
+        self.id = self.incremento()
         self.nome = nome
         self.email = email
         self.senha = senha #privado
@@ -17,23 +23,51 @@ class Usuario:
 
 
 class Categoria:
-    pass
+    contador = 0
 
-class Transacao(ABC):
+    @classmethod
+    def incremento(cls):
+        cls.contador += 1
+        return cls.contador
+
+
+class Transacao(ABC):   
     @abstractmethod
     def transacao(self):
         pass
 
+
 class Pagamento:
-    pass
+    contador = 0
+
+    @classmethod
+    def incremento(cls):
+        cls.contador += 1
+        return cls.contadorpass
+
 
 class Lancamento:
+    contador = 0
+
+    @classmethod
+    def incremento(cls):
+        cls.contador += 1
+        return cls.contador
+    
     def __init__(self, id, descricao, valor, data, categoria_id, conta_id):
-        self.id = id
+        self.id = self.incremento()
+
 
 class Metas:
+    contador = 0
+
+    @classmethod
+    def incremento(cls):
+        cls.contador += 1
+        return cls.contador
+    
     def __init__(self, id, nome, valor, saldo, prazo):
-        self.id = id
+        self.id = self.incremento()
         self.nome = nome
         self.valor = valor
         self. prazo = prazo
