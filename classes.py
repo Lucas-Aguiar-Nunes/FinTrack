@@ -1,15 +1,16 @@
 from abc import ABC, abstractmethod
 
+
 class Usuario:
-    contador = 0
+    contador_id = 0
 
     @classmethod
-    def incremento(cls):
-        cls.contador += 1
-        return cls.contador
+    def incremento_id(cls):
+        cls.contador_id += 1
+        return cls.contador_id
 
     def __init__(self, id, nome, email, senha, idade):
-        self.id = self.incremento()
+        self.id = self.incremento_id()
         self.nome = nome
         self.email = email
         self.senha = senha #privado
@@ -23,12 +24,15 @@ class Usuario:
 
 
 class Categoria:
-    contador = 0
+    contador_id = 0
 
     @classmethod
-    def incremento(cls):
-        cls.contador += 1
-        return cls.contador
+    def incremento_id(cls):
+        cls.contador_id += 1
+        return cls.contador_id
+    
+    def __init__(self, nome, limite, saldo):
+        pass
 
 
 class Transacao(ABC):   
@@ -38,36 +42,36 @@ class Transacao(ABC):
 
 
 class Pagamento:
-    contador = 0
+    contador_id = 0
 
     @classmethod
-    def incremento(cls):
-        cls.contador += 1
-        return cls.contadorpass
+    def incremento_id(cls):
+        cls.contador_id += 1
+        return cls.contador_id
 
 
-class Lancamento:
-    contador = 0
+class Proventos:
+    contador_id = 0
 
     @classmethod
-    def incremento(cls):
-        cls.contador += 1
-        return cls.contador
+    def incremento_id(cls):
+        cls.contador_id += 1
+        return cls.contador_id
     
     def __init__(self, id, descricao, valor, data, categoria_id, conta_id):
-        self.id = self.incremento()
+        self.id = self.incremento_id()
 
 
 class Metas:
-    contador = 0
+    contador_id = 0
 
     @classmethod
-    def incremento(cls):
-        cls.contador += 1
-        return cls.contador
+    def incremento_id(cls):
+        cls.contador_id += 1
+        return cls.contador_id
     
     def __init__(self, id, nome, valor, saldo, prazo):
-        self.id = self.incremento()
+        self.id = self.incremento_id()
         self.nome = nome
         self.valor = valor
         self. prazo = prazo
