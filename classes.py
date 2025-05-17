@@ -9,18 +9,19 @@ class Usuario:
         cls.contador_id += 1
         return cls.contador_id
 
-    def __init__(self, id, nome, email, senha, idade):
+    def __init__(self, nome, email, saldo):
         self.id = self.incremento_id()
         self.nome = nome
         self.email = email
-        self.senha = senha #privado
-        self.set_idade(idade)
+        self.__saldo = saldo
 
-    def set_idade(self, idade):
-        while idade < 0:
-            print("Idade Invalida!")
-            idade = int("Idade tem que ser maior que 16: ")
-        self.idade = idade
+    @property
+    def saldo(self):
+        return self.__saldo
+    
+    @saldo.setter
+    def saldo(self, valor):
+        self.__saldo = valor
 
 
 class Categoria:
@@ -31,8 +32,19 @@ class Categoria:
         cls.contador_id += 1
         return cls.contador_id
     
-    def __init__(self, nome, limite, saldo):
-        pass
+    def __init__(self, nome, limite):
+        self.id = self.incremento_id()
+        self.nome = nome
+        self.limite = limite
+        self.__saldo = 0
+    
+    @property
+    def saldo(self):
+        return self.__saldo
+    
+    @saldo.setter
+    def saldo(self, valor):
+        self.__saldo = valor      
 
 
 class Transacao(ABC):   
@@ -41,16 +53,7 @@ class Transacao(ABC):
         pass
 
 
-class Pagamento:
-    contador_id = 0
-
-    @classmethod
-    def incremento_id(cls):
-        cls.contador_id += 1
-        return cls.contador_id
-
-
-class Proventos:
+class Pagamento(Transacao):
     contador_id = 0
 
     @classmethod
@@ -58,8 +61,36 @@ class Proventos:
         cls.contador_id += 1
         return cls.contador_id
     
-    def __init__(self, id, descricao, valor, data, categoria_id, conta_id):
+    def __init__(self, nome, valor, data, forma_pagamento, categoria_id, conta_id):
         self.id = self.incremento_id()
+        self.nome = nome
+        self.valor = valor
+        self.data = data
+        self.forma_pagamento = forma_pagamento
+        self.categoria_id = categoria_id
+        self.conta_id = conta_id
+
+    def transacao(self):
+        pass
+
+
+class Proventos(Transacao):
+    contador_id = 0
+
+    @classmethod
+    def incremento_id(cls):
+        cls.contador_id += 1
+        return cls.contador_id
+    
+    def __init__(self, nome, valor, data, conta_id):
+        self.id = self.incremento_id()
+        self.nome = nome
+        self.valor = valor
+        self.data = data
+        self.conta_id = conta_id
+
+    def transacao(self):
+        pass
 
 
 class Metas:
@@ -70,12 +101,12 @@ class Metas:
         cls.contador_id += 1
         return cls.contador_id
     
-    def __init__(self, id, nome, valor, saldo, prazo):
+    def __init__(self, nome, valor, prazo):
         self.id = self.incremento_id()
         self.nome = nome
         self.valor = valor
         self. prazo = prazo
-        self.saldo = saldo
+        self.__saldo = 0
 
     @property
     def saldo(self):
