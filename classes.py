@@ -9,9 +9,10 @@ class Usuario:
         cls.contador_id += 1
         return cls.contador_id
 
-    def __init__(self, nome, email, saldo):
+    def __init__(self, nome, cpf, email, saldo):
         self.id = self.incremento_id()
         self.nome = nome
+        self.cpf = cpf
         self.email = email
         self.__saldo = saldo
 
@@ -82,11 +83,12 @@ class Proventos(Transacao):
         cls.contador_id += 1
         return cls.contador_id
     
-    def __init__(self, nome, valor, data, conta_id):
+    def __init__(self, nome, valor, data, categoria_id, conta_id):
         self.id = self.incremento_id()
         self.nome = nome
         self.valor = valor
         self.data = data
+        self.categoria_id = categoria_id
         self.conta_id = conta_id
 
     def transacao(self):
