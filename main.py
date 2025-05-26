@@ -1,6 +1,5 @@
 from crud import *
 from erros import *
-from datetime import datetime
 
 def menu():
     while True:
@@ -72,7 +71,10 @@ def adicionar():
                 saldo = float(input("Saldo inicial: "))
                 if saldo <= 0:
                     raise Valor_Incorreto
-                prazo = input("Prazo: ")
+                try:
+                    prazo = datetime.strptime(prazo, "%d/%m/%Y")
+                except ValueError:
+                    raise Data_Incorreta
                 usuario_id = int(input("ID do usuário: "))
                 usuario = session.query(Usuario).filter_by(id=usuario_id).first()
                 if usuario:

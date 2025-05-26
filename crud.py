@@ -1,6 +1,6 @@
 from tabelas import *
 from erros import *
-from datetime import date
+from datetime import datetime
 
 def adicionar_usuario(nome, email, saldo_inicial):
     usuario = Usuario(
@@ -29,7 +29,7 @@ def atualizar_usuario(usuario):
     except Email_Invalido:
         print("Email Invalido. Tente Novamente.")
     except ValueError:
-            print("Valor Deve ser Numerico. Tente Novamente.")
+        print("Valor Deve ser Numerico. Tente Novamente.")
     except Valor_Incorreto:
         print("Valor Deve ser Maior que 0. Tente Novamente.")
     else:
@@ -63,9 +63,9 @@ def atualizar_categoria(categoria):
     except Campo_Vazio:
         print("Campo Obrigatorio. Tente Novamente.")
     except ValueError:
-            print("Valor Deve ser Numerico. Tente Novamente.")
+        print("Valor Deve ser Numerico. Tente Novamente.")
     except Valor_Incorreto:
-            print("Valor Deve ser Maior que 0. Tente Novamente.")
+        print("Valor Deve ser Maior que 0. Tente Novamente.")
     else:
         categoria.nome = nome.upper()
         categoria.limite = limite
@@ -137,7 +137,7 @@ def adicionar_provento(nome, valor, data, fonte, usuario_id):
     return provento
 
 def atualizar_provento(provento):
-        print(f"{provento.id} - {provento.nome}\t| Conta: {provento.conta_id}\t| Fonte: {provento.fonte}\t| Valor: {provento.moeda}{provento.valor}")
+    print(f"{provento.id} - {provento.nome}\t| Conta: {provento.conta_id}\t| Fonte: {provento.fonte}\t| Valor: {provento.moeda}{provento.valor}")
     try:
         nome = input("Nome do usuário: ")
         email = input("Email: ")
@@ -153,7 +153,7 @@ def atualizar_provento(provento):
     except Email_Invalido:
         print("Email Invalido. Tente Novamente.")
     except ValueError:
-            print("Valor Deve ser Numerico. Tente Novamente.")
+        print("Valor Deve ser Numerico. Tente Novamente.")
     except Valor_Incorreto:
         print("Valor Deve ser Maior que 0. Tente Novamente.")
     else:
@@ -178,35 +178,45 @@ def adicionar_meta(nome, valor, prazo, usuario_id, saldo_inicial=0.0):
     return meta
 
 def atualizar_meta(meta):
-        print(f"{meta.id} - {meta.nome}\t| Conta: {meta.conta_id}\t| Valor: {meta.moeda}{meta.valor}\t| Prazo: {meta.prazo}")
+    print(f"{meta.id} - {meta.nome}\t| Conta: {meta.conta_id}\t| Valor: {meta.moeda}{meta.valor}\t| Prazo: {meta.prazo}")
     try:
-        nome = input("Nome do usuário: ")
-        email = input("Email: ")
-        if nome == "" or email == "":
+        nome = input("Nome da Meta: ")
+        if nome == "":
             raise Campo_Vazio
-        if "@" not in email:
-            raise Email_Invalido
-        saldo = float(input("Saldo inicial: "))
-        if saldo < 0:
+        valor = float(input("Valor Desejado: "))
+        if valor <= 0:
             raise Valor_Incorreto
+        saldo = float(input("Saldo: "))
+        if saldo <= 0:
+            raise Valor_Incorreto
+        prazo = input("Data (DD/MM/AAAA): ")
+        try:
+            prazo = datetime.strptime(prazo, "%d/%m/%Y")
+        except ValueError:
+            raise Data_Incorreta
+        usuario_id = int(input("ID do usuário: "))
+        usuario = session.query(Usuario).filter_by(id=usuario_id).first()
+        if not usuario:
+            raise ID_Incorreto
     except Campo_Vazio:
         print("Campo Obrigatorio. Tente Novamente.")
-    except Email_Invalido:
-        print("Email Invalido. Tente Novamente.")
     except ValueError:
-            print("Valor Deve ser Numerico. Tente Novamente.")
+        print("Valor Deve ser Numerico. Tente Novamente.")
     except Valor_Incorreto:
         print("Valor Deve ser Maior que 0. Tente Novamente.")
+    except ID_Incorreto:
+        print("ID não Encontrado. Tente Novamente")
+    except Data_Incorreta:
+        print("Data Invalida. Tente Novamente.")
     else:
-        usuario.nome = nome
-        usuario.email = email
-        usuario.saldo = saldo
+        meta.nome = nome
+        meta.valor = valor
+        meta.prazo = prazo
+        meta.conta_id = usuario_id
         session.commit()
         print("Atualizado com Sucesso.")
     finally:
         sair = input("Pressione Qualquer Tecla Para Voltar...")
-
-
 
 def listar_usuarios():
     return session.query(Usuario).all()
