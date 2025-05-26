@@ -74,8 +74,12 @@ def adicionar():
                     raise Valor_Incorreto
                 prazo = input("Prazo: ")
                 usuario_id = int(input("ID do usuário: "))
-                adicionar_meta(nome.upper(), valor, prazo, usuario_id, saldo)
-                print("Cadastro com Sucesso.")
+                usuario = session.query(Usuario).filter_by(id=usuario_id).first()
+                if usuario:
+                    adicionar_meta(nome.upper(), valor, prazo, usuario_id, saldo)
+                    print("Cadastro com Sucesso.")
+                else:
+                    raise ID_Incorreto
             elif escolha == "3":
                 nome = input("Nome da categoria: ")
                 if nome == "":
@@ -99,7 +103,13 @@ def adicionar():
                 except ValueError:
                     raise Data_Incorreta
                 usuario_id = int(input("ID do usuário: "))
+                usuario = session.query(Usuario).filter_by(id=usuario_id).first()
+                if not usuario:
+                    raise ID_Incorreto
                 categoria_id = int(input("ID da categoria: "))
+                categoria = session.query(Categoria).filter_by(id=categoria_id).first()
+                if not categoria:
+                    raise ID_Incorreto
                 adicionar_pagamento(nome.upper(), valor, data, forma.upper(), usuario_id, categoria_id)
                 print("Cadastro com Sucesso.")
             elif escolha == "5":
@@ -116,8 +126,11 @@ def adicionar():
                 except ValueError:
                     raise Data_Incorreta
                 usuario_id = int(input("ID do usuário: "))
-                adicionar_provento(nome.upper(), valor, data, fonte.upper(), usuario_id)
-                print("Cadastro com Sucesso.")
+                usuario = session.query(Usuario).filter_by(id=usuario_id).first()
+                if usuario:
+                    adicionar_provento(nome.upper(), valor, data, fonte.upper(), usuario_id)
+                    print("Cadastro com Sucesso.")
+                raise ID_Incorreto
             elif escolha == "0":
                 print("Voltando para Menu Principal")
             else:
@@ -134,6 +147,8 @@ def adicionar():
             print("Valor Deve ser Maior que 0. Tente Novamente.")
         except Data_Incorreta:
             print("Data Invalida. Tente Novamente.")
+        except ID_Incorreto:
+            print("ID não Encontrado. Tente Novamente")
         else:
             break
         finally:

@@ -92,7 +92,7 @@ def adicionar_pagamento(nome, valor, data, forma_pagamento, usuario_id, categori
     return pagamento
 
 def atualizar_pagamento(pagamento):
-        print(f"{pagamento.id} - {pagamento.nome}\t| Conta: {pagamento.conta_id}\t| Categoria: {pagamento.categoria_id}\t| Valor: {pagamento.moeda}{pagamento.valor}\t| Forma: {pagamento.forma_pagamento}")
+    print(f"{pagamento.id} - {pagamento.nome}\t| Conta: {pagamento.conta_id}\t| Categoria: {pagamento.categoria_id}\t| Valor: {pagamento.moeda}{pagamento.valor}\t| Forma: {pagamento.forma_pagamento}")
     try:
         nome = input("Nome do usuário: ")
         email = input("Email: ")
