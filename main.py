@@ -78,9 +78,11 @@ def adicionar():
                 print("Cadastro com Sucesso.")
             elif escolha == "3":
                 nome = input("Nome da categoria: ")
-                limite = float(input("Limite: "))
-                if nome or limite == "":
+                if nome == "":
                     raise Campo_Vazio
+                limite = float(input("Limite: "))
+                if limite <= 0:
+                    raise Valor_Incorreto
                 adicionar_categoria(nome.upper(), limite)
                 print("Cadastro com Sucesso.")
             elif escolha == "4":
@@ -200,45 +202,35 @@ def atualizar():
                 id = int(input("Informe o ID do Usuário: "))
                 usuario = session.query(Usuario).filter_by(id=id).first()
                 if usuario:
-                    session.delete(usuario)
-                    session.commit()
-                    print("Atualizado com Sucesso.")
+                    atualizar_usuario(usuario)
                 else:
                     raise ID_Incorreto
             elif escolha == "2":
                 id = int(input("Informe o ID da Meta: "))
                 meta = session.query(Meta).filter_by(id=id).first()
                 if meta:
-                    session.delete(meta)
-                    session.commit()
-                    print("Atualizado com Sucesso.")
+                    atualizar_meta(meta)
                 else:
                     raise ID_Incorreto
             elif escolha == "3":
                 id = int(input("Informe o ID da Categoria: "))
                 categoria = session.query(Categoria).filter_by(id=id).first()
                 if categoria:
-                    session.delete(categoria)
-                    session.commit()
-                    print("Atualizado com Sucesso.")
+                    atualizar_categoria(categoria)
                 else:
                     raise ID_Incorreto
             elif escolha == "4":
                 id = int(input("Informe o ID do Pagamento: "))
                 pagamento = session.query(Pagamento).filter_by(id=id).first()
                 if pagamento:
-                    session.delete(pagamento)
-                    session.commit()
-                    print("Atualizado com Sucesso.")
+                    atualizar_pagamento(pagamento)
                 else:
                     raise ID_Incorreto
             elif escolha == "5":
                 id = int(input("Informe o ID do Provento: "))
                 provento = session.query(Provento).filter_by(id=id).first()
                 if provento:
-                    session.delete(provento)
-                    session.commit()
-                    print("Atualizado com Sucesso.")
+                    atualizar_provento(provento)
                 else:
                     raise ID_Incorreto
             elif escolha == "0":
