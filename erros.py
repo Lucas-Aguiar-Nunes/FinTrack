@@ -13,5 +13,9 @@ class Email_Invalido(Exception):
 class Valor_Incorreto(Exception):
     pass
 
+
 class Data_Incorreta(Exception):
+    pass
+
+class ID_Incorreto(Exception):
     pass
