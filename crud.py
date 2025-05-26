@@ -94,27 +94,43 @@ def adicionar_pagamento(nome, valor, data, forma_pagamento, usuario_id, categori
 def atualizar_pagamento(pagamento):
     print(f"{pagamento.id} - {pagamento.nome}\t| Conta: {pagamento.conta_id}\t| Categoria: {pagamento.categoria_id}\t| Valor: {pagamento.moeda}{pagamento.valor}\t| Forma: {pagamento.forma_pagamento}")
     try:
-        nome = input("Nome do usuário: ")
-        email = input("Email: ")
-        if nome == "" or email == "":
+        nome = input("Nome do pagamento: ")
+        forma = input("Forma de pagamento: ")
+        if nome == "" or forma == "":
             raise Campo_Vazio
-        if "@" not in email:
-            raise Email_Invalido
-        saldo = float(input("Saldo inicial: "))
-        if saldo < 0:
+        valor = float(input("Valor: "))
+        if valor <= 0:
             raise Valor_Incorreto
+        data = input("Data (DD/MM/AAAA): ")
+        try:
+            data = datetime.strptime(data, "%d/%m/%Y")
+        except ValueError:
+            raise Data_Incorreta
+        usuario_id = int(input("ID do usuário: "))
+        usuario = session.query(Usuario).filter_by(id=usuario_id).first()
+        if not usuario:
+            raise ID_Incorreto
+        categoria_id = int(input("ID da categoria: "))
+        categoria = session.query(Categoria).filter_by(id=categoria_id).first()
+        if not categoria:
+            raise ID_Incorreto        
     except Campo_Vazio:
         print("Campo Obrigatorio. Tente Novamente.")
-    except Email_Invalido:
-        print("Email Invalido. Tente Novamente.")
     except ValueError:
             print("Valor Deve ser Numerico. Tente Novamente.")
     except Valor_Incorreto:
         print("Valor Deve ser Maior que 0. Tente Novamente.")
+    except ID_Incorreto:
+        print("ID não Encontrado. Tente Novamente")
+    except Data_Incorreta:
+        print("Data Invalida. Tente Novamente.")
     else:
-        usuario.nome = nome
-        usuario.email = email
-        usuario.saldo = saldo
+        pagamento.nome = nome.upper()
+        pagamento.valor = valor
+        pagamento.forma = forma.upper()
+        pagamento.data = data
+        pagamento.usuario_id = usuario
+        pagamento.categoria_id = categoria
         session.commit()
         print("Atualizado com Sucesso.")
     finally:
@@ -139,27 +155,38 @@ def adicionar_provento(nome, valor, data, fonte, usuario_id):
 def atualizar_provento(provento):
     print(f"{provento.id} - {provento.nome}\t| Conta: {provento.conta_id}\t| Fonte: {provento.fonte}\t| Valor: {provento.moeda}{provento.valor}")
     try:
-        nome = input("Nome do usuário: ")
-        email = input("Email: ")
-        if nome == "" or email == "":
+        nome = input("Nome do pagamento: ")
+        fonte = input("Fonte do Provento: ")
+        if nome == "" or fonte == "":
             raise Campo_Vazio
-        if "@" not in email:
-            raise Email_Invalido
-        saldo = float(input("Saldo inicial: "))
-        if saldo < 0:
+        valor = float(input("Valor: "))
+        if valor <= 0:
             raise Valor_Incorreto
+        data = input("Data (DD/MM/AAAA): ")
+        try:
+            data = datetime.strptime(data, "%d/%m/%Y")
+        except ValueError:
+            raise Data_Incorreta
+        usuario_id = int(input("ID do usuário: "))
+        usuario = session.query(Usuario).filter_by(id=usuario_id).first()
+        if not usuario:
+            raise ID_Incorreto        
     except Campo_Vazio:
         print("Campo Obrigatorio. Tente Novamente.")
-    except Email_Invalido:
-        print("Email Invalido. Tente Novamente.")
     except ValueError:
-        print("Valor Deve ser Numerico. Tente Novamente.")
+            print("Valor Deve ser Numerico. Tente Novamente.")
     except Valor_Incorreto:
         print("Valor Deve ser Maior que 0. Tente Novamente.")
+    except ID_Incorreto:
+        print("ID não Encontrado. Tente Novamente")
+    except Data_Incorreta:
+        print("Data Invalida. Tente Novamente.")
     else:
-        usuario.nome = nome
-        usuario.email = email
-        usuario.saldo = saldo
+        provento.nome = nome.upper()
+        provento.fonte = fonte.upper()
+        provento.valor = valor
+        provento.data = data
+        provento.usuario_id = usuario
         session.commit()
         print("Atualizado com Sucesso.")
     finally:

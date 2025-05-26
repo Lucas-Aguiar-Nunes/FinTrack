@@ -35,7 +35,7 @@ def menu():
     print("Fechando Programa...")
 
 
-def adicionar():
+def adicionar(): #type: ignore
     while True:
         try:
             print("\t\tControle Financeiro")
@@ -78,10 +78,9 @@ def adicionar():
                 usuario_id = int(input("ID do usuário: "))
                 usuario = session.query(Usuario).filter_by(id=usuario_id).first()
                 if usuario:
-                    adicionar_meta(nome.upper(), valor, prazo, usuario_id, saldo)
-                    print("Cadastro com Sucesso.")
-                else:
                     raise ID_Incorreto
+                adicionar_meta(nome.upper(), valor, prazo, usuario_id, saldo)
+                print("Cadastro com Sucesso.")
             elif escolha == "3":
                 nome = input("Nome da categoria: ")
                 if nome == "":
@@ -129,10 +128,10 @@ def adicionar():
                     raise Data_Incorreta
                 usuario_id = int(input("ID do usuário: "))
                 usuario = session.query(Usuario).filter_by(id=usuario_id).first()
-                if usuario:
-                    adicionar_provento(nome.upper(), valor, data, fonte.upper(), usuario_id)
-                    print("Cadastro com Sucesso.")
-                raise ID_Incorreto
+                if not usuario:
+                    raise ID_Incorreto
+                adicionar_provento(nome.upper(), valor, data, fonte.upper(), usuario_id)
+                print("Cadastro com Sucesso.")
             elif escolha == "0":
                 print("Voltando para Menu Principal")
             else:
