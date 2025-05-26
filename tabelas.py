@@ -1,119 +1,215 @@
-from abc import ABC, abstractmethod
+from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey, create_engine
+from sqlalchemy.orm import declarative_base, relationship, sessionmaker
+from datetime import date
 
+Base = declarative_base()
 
-class Usuario:
-    contador_id = 0
+class Usuario(Base):
+    __tablename__ = 'usuarios'
 
-    @classmethod
-    def incremento_id(cls):
-        cls.contador_id += 1
-        return cls.contador_id
+    moeda = 'R$'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    nome = Column(String, nullable=False)
+    email = Column(String, nullable=False)
+    _saldo = Column("saldo", Float, default=0.0)
 
-    def __init__(self, nome, cpf, email, saldo):
-        self.id = self.incremento_id()
-        self.nome = nome
-        self.cpf = cpf
-        self.email = email
-        self.__saldo = saldo
+    pagamentos = relationship('Pagamento', back_populates='usuario')
+    proventos = relationship('Provento', back_populates='usuario')
+    metas = relationship('Meta', back_populates='usuario')
 
     @property
     def saldo(self):
-        return self.__saldo
-    
+        return self._saldo
+
     @saldo.setter
     def saldo(self, valor):
-        self.__saldo = valor
-
-
-class Categoria:
-    contador_id = 0
+        self._saldo = valor
 
     @classmethod
-    def incremento_id(cls):
-        cls.contador_id += 1
-        return cls.contador_id
-    
-    def __init__(self, nome, limite):
-        self.id = self.incremento_id()
-        self.nome = nome
-        self.limite = limite
-        self.__saldo = 0
-    
+    def alterar_moeda(cls, moeda):
+        cls.moeda = moeda
+
+
+class Categoria(Base):
+    __tablename__ = 'categorias'
+
+    moeda = 'R$'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    nome = Column(String, nullable=False)
+    limite = Column(Float, nullable=False)
+    _saldo = Column("saldo", Float, default=0.0)
+
+    pagamentos = relationship('Pagamento', back_populates='categoria')
+
     @property
     def saldo(self):
-        return self.__saldo
-    
+        return self._saldo
+
     @saldo.setter
     def saldo(self, valor):
-        self.__saldo = valor      
+        self._saldo = valor
+
+    @classmethod
+    def alterar_moeda(cls, moeda):
+        cls.moeda = moeda
 
 
-class Transacao(ABC):   
-    @abstractmethod
+class Transacao(Base):
+    __abstract__ = True
+
+    moeda = 'R$'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    nome = Column(String, nullable=False)
+    valor = Column(Float, nullable=False)
+    data = Column(Date, nullable=False)
+
     def transacao(self):
-        pass
+        raise NotImplementedError("Subclasse precisa implementar o método transacao()")
+    
+    @classmethod
+    def alterar_moeda(cls, moeda):
+        cls.moeda = moeda
 
 
 class Pagamento(Transacao):
-    contador_id = 0
+    __tablename__ = 'pagamentos'
 
-    @classmethod
-    def incremento_id(cls):
-        cls.contador_id += 1
-        return cls.contador_id
-    
-    def __init__(self, nome, valor, data, forma_pagamento, categoria_id, conta_id):
-        self.id = self.incremento_id()
-        self.nome = nome
-        self.valor = valor
-        self.data = data
-        self.forma_pagamento = forma_pagamento
-        self.categoria_id = categoria_id
-        self.conta_id = conta_id
+    forma_pagamento = Column(String, nullable=False)
+    conta_id = Column(Integer, ForeignKey('usuarios.id'), nullable=False)
+    categoria_id = Column(Integer, ForeignKey('categorias.id'), nullable=False)  
+
+    usuario = relationship('Usuario', back_populates='pagamentos')
+    categoria = relationship('Categoria', back_populates='pagamentos')
 
     def transacao(self):
-        pass
+        if self.valor < 0: #type:ignore
+            raise ValueError("Valor deve ser positivo.")
+        if self.usuario is None or self.categoria is None:
+            raise ValueError("Usuário ou categoria não vinculados corretamente.")
+        if self.valor > self.usuario.saldo:
+            raise ValueError("Valor deve ser menor que o saldo disponível.")
+        self.usuario.saldo -= self.valor
+        self.categoria.saldo += self.valor
 
 
-class Proventos(Transacao):
-    contador_id = 0
+class Provento(Transacao):
+    __tablename__ = 'proventos'
 
-    @classmethod
-    def incremento_id(cls):
-        cls.contador_id += 1
-        return cls.contador_id
-    
-    def __init__(self, nome, valor, data, categoria_id, conta_id):
-        self.id = self.incremento_id()
-        self.nome = nome
-        self.valor = valor
-        self.data = data
-        self.categoria_id = categoria_id
-        self.conta_id = conta_id
+    fonte = Column(String, nullable=False)
+    conta_id = Column(Integer, ForeignKey('usuarios.id'), nullable=False)
+
+    usuario = relationship('Usuario', back_populates='proventos')
 
     def transacao(self):
-        pass
+        if self.valor < 0: #type:ignore
+            raise ValueError("Valor deve ser positivo.")
+        if self.usuario is None:
+            raise ValueError("Usuário não vinculado corretamente.")
+        self.usuario.saldo += self.valor
 
 
-class Metas:
-    contador_id = 0
+class Meta(Base):
+    __tablename__ = 'metas'
 
-    @classmethod
-    def incremento_id(cls):
-        cls.contador_id += 1
-        return cls.contador_id
-    
-    def __init__(self, nome, valor, prazo):
-        self.id = self.incremento_id()
-        self.nome = nome
-        self.valor = valor
-        self. prazo = prazo
-        self.__saldo = 0
+    moeda = 'R$'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    nome = Column(String, nullable=False)
+    valor = Column(Float, nullable=False)
+    prazo = Column(Date, nullable=False)
+    _saldo = Column("saldo", Float, default=0.0)
+    conta_id = Column(Integer, ForeignKey('usuarios.id'), nullable=False)
+
+    usuario = relationship('Usuario', back_populates='metas')
 
     @property
     def saldo(self):
-        return self.__saldo
-    
+        return self._saldo
+
     @saldo.setter
     def saldo(self, valor):
-        self.__saldo = valor
+        self._saldo = valor
+
+    @classmethod
+    def alterar_moeda(cls, moeda):
+        cls.moeda = moeda
+
+
+engine = create_engine('sqlite:///controlefinanceiro.db', echo=False)
+Base.metadata.create_all(engine)
+
+Session = sessionmaker(bind=engine)
+session = Session()
+
+def teste():
+    usuario = Usuario(nome="João", email="joao@email.com")
+    usuario.saldo = 1000
+
+    categoria = Categoria(nome="Alimentação", limite=500)
+
+    session.add(usuario)
+    session.add(categoria)
+    session.commit()
+
+    pagamento = Pagamento(
+        nome="Mercado",
+        valor=200,
+        data=date.today(),
+        forma_pagamento="Cartão de crédito",
+        categoria_id=categoria.id,
+        conta_id=usuario.id
+    )
+
+    provento = Provento(
+        nome="Salario",
+        valor=1000,
+        data=date.today(),
+        fonte="CLT",
+        conta_id=usuario.id
+    )
+
+    meta = Meta(
+        nome="Viagem",
+        valor=5000,
+        prazo=date(2025, 12, 12),
+        conta_id=usuario.id
+    )
+
+    session.add(pagamento)
+    pagamento = session.query(Pagamento).get(pagamento.id)
+    if pagamento is not None:
+        pagamento.transacao()
+
+    session.add(provento)
+    provento = session.query(Provento).get(provento.id)
+    if provento is not None:
+        provento.transacao()
+    
+    session.add(meta)
+    session.commit()
+
+    usuarios = session.query(Usuario).all()
+    for u in usuarios:
+        print(f"{u.id} - {u.nome}\t| Email: {u.email}\t| Saldo: {u.moeda}{u.saldo}")
+
+    categorias = session.query(Categoria).all()
+    for c in categorias:
+        print(f"{c.id} - {c.nome}\t| Limite: {c.moeda}{c.limite}\t| Saldo: {c.moeda}{c.saldo}")
+
+    pagamentos = session.query(Pagamento).all()
+    for p in pagamentos:
+        print(f"{p.id} - {p.nome}\t| Conta: {p.conta_id}\t| Categoria: {p.categoria_id}\t| Valor: {p.moeda}{p.valor}\t| Forma: {p.forma_pagamento}")
+
+    proventos = session.query(Provento).all()
+    for p in proventos:
+        print(f"{p.id} - {p.nome}\t| Conta: {p.conta_id}\t| Fonte: {p.fonte}\t| Valor: {p.moeda}{p.valor}")
+
+    metas = session.query(Meta).all()
+    for m in metas:
+        print(f"{m.id} - {m.nome}\t| Conta: {m.conta_id}\t| Valor: {m.moeda}{m.valor}\t| Prazo: {m.prazo}")
+
+if __name__ == "__main__":
+    teste()

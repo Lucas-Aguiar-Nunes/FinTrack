@@ -1,73 +1,82 @@
-from sqlalchemy import create_engine, Column, Integer, String, Float, Date, ForeignKey
-from sqlalchemy.orm import sessionmaker, declarative_base, relationship
+from tabelas import *
 from datetime import date
 
+def adicionar_usuario(nome, email, saldo_inicial):
+    usuario = Usuario(
+        nome=nome, 
+        email=email
+    )
+    usuario.saldo = saldo_inicial
+    session.add(usuario)
+    session.commit()
+    return usuario
 
-engine = create_engine('sqlite:///controlefinanceiro.db')
-Session = sessionmaker(bind=engine)
-session = Session()
+def adicionar_categoria(nome, limite, saldo_inicial=0.0):
+    categoria = Categoria(
+        nome=nome, 
+        limite=limite
+    )
+    categoria.saldo = saldo_inicial
+    session.add(categoria)
+    session.commit()
+    return categoria
 
-Base = declarative_base()
+def adicionar_pagamento(nome, valor, data, forma_pagamento, usuario_id, categoria_id):
+    pagamento = Pagamento(
+        nome=nome,
+        valor=valor,
+        data=data,
+        forma_pagamento=forma_pagamento,
+        conta_id=usuario_id,
+        categoria_id=categoria_id
+    )
+    session.add(pagamento)
+    session.commit()
+    pagamento = session.query(Pagamento).get(pagamento.id)
+    if pagamento is not None:
+        pagamento.transacao()
+    session.commit()
+    return pagamento
 
-class Usuario(Base):
-    __tablename__ = 'usuarios'
+def adicionar_provento(nome, valor, data, fonte, usuario_id):
+    provento = Provento(
+        nome=nome,
+        valor=valor,
+        data=data,
+        fonte=fonte,
+        conta_id=usuario_id,
+    )
+    session.add(provento)
+    session.commit()
+    provento = session.query(Provento).get(provento.id)
+    if provento is not None:
+        provento.transacao()
+    session.commit()
+    return provento
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    nome = Column(String, nullable=False)
-    email = Column(String, nullable=False)
-    saldo = Column(Float, default=0.0)
+def adicionar_meta(nome, valor, prazo, usuario_id, saldo_inicial=0.0):
+    meta = Meta(
+        nome=nome,
+        valor=valor,
+        prazo = prazo,
+        conta_id=usuario_id
+    )
+    meta.saldo = saldo_inicial
+    session.add(meta)
+    session.commit()
+    return meta
 
-    pagamentos = relationship('Pagamento', back_populates='usuario')
-    proventos = relationship('Proventos', back_populates='usuario')
+def listar_usuarios():
+    return session.query(Usuario).all()
 
+def listar_categorias():
+    return session.query(Categoria).all()
 
-class Categoria(Base):
-    __tablename__ = 'categorias'
+def listar_pagamentos():
+    return session.query(Pagamento).all()
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    nome = Column(String, nullable=False)
-    limite = Column(Float, nullable=False)
-    saldo = Column(Float, default=0.0)
+def listar_proventos():
+    return session.query(Provento).all()
 
-    pagamentos = relationship('Pagamento', back_populates='categoria')
-
-
-class Transacao(Base):
-    __abstract__ = True 
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    nome = Column(String, nullable=False)
-    valor = Column(Float, nullable=False)
-    data = Column(Date, nullable=False)
-
-
-class Pagamento(Transacao):
-    __tablename__ = 'pagamentos'
-
-    forma_pagamento = Column(String, nullable=False)
-    categoria_id = Column(Integer, ForeignKey('categorias.id'), nullable=False)
-    conta_id = Column(Integer, ForeignKey('usuarios.id'), nullable=False)
-
-    categoria = relationship('Categoria', back_populates='pagamentos')
-    usuario = relationship('Usuario', back_populates='pagamentos')
-
-
-class Proventos(Transacao):
-    __tablename__ = 'proventos'
-
-    conta_id = Column(Integer, ForeignKey('usuarios.id'), nullable=False)
-
-    usuario = relationship('Usuario', back_populates='proventos')
-
-
-class Metas(Base):
-    __tablename__ = 'metas'
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    nome = Column(String, nullable=False)
-    valor = Column(Float, nullable=False)
-    prazo = Column(Date, nullable=False)
-    saldo = Column(Float, default=0.0)
-
-
-Base.metadata.create_all(engine)
+def listar_metas():
+    return session.query(Meta).all()
