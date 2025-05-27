@@ -2,18 +2,7 @@ from tabelas import *
 from erros import *
 from datetime import datetime
 
-def adicionar_usuario(nome, email, saldo_inicial):
-    usuario = Usuario(
-        nome=nome, 
-        email=email
-    )
-    usuario.saldo = saldo_inicial
-    session.add(usuario)
-    session.commit()
-    return usuario
-
-def atualizar_usuario(usuario):
-    print(f"{usuario.id} - {usuario.nome}\t| Email: {usuario.email}\t| Saldo: {usuario.moeda}{usuario.saldo}")
+def entrada_usuario(usuario=None):
     try:
         nome = input("Nome do usuário: ")
         email = input("Email: ")
@@ -21,7 +10,7 @@ def atualizar_usuario(usuario):
             raise Campo_Vazio
         if "@" not in email:
             raise Email_Invalido
-        saldo = float(input("Saldo inicial: "))
+        saldo = float(input("Saldo: "))
         if saldo < 0:
             raise Valor_Incorreto
     except Campo_Vazio:
@@ -33,32 +22,34 @@ def atualizar_usuario(usuario):
     except Valor_Incorreto:
         print("Valor Deve ser Maior que 0. Tente Novamente.")
     else:
-        usuario.nome = nome.upper()
-        usuario.email = email.upper()
-        usuario.saldo = saldo
+        if usuario:
+            usuario.nome = nome.upper()
+            usuario.email = email.upper()
+            usuario.saldo = saldo
+            mensagem = "Atualizado com Sucesso."
+        else:
+            usuario = Usuario(
+                nome=nome.upper(), 
+                email=email.upper()
+            )
+            usuario.saldo = saldo
+            session.add(usuario)
+            mensagem = "Cadastro com Sucesso."
         session.commit()
-        print("Atualizado com Sucesso.")
+        print(mensagem)
     finally:
         sair = input("Pressione Qualquer Tecla Para Voltar...")
 
-def adicionar_categoria(nome, limite, saldo_inicial=0.0):
-    categoria = Categoria(
-        nome=nome, 
-        limite=limite
-    )
-    categoria.saldo = saldo_inicial
-    session.add(categoria)
-    session.commit()
-    return categoria
-
-def atualizar_categoria(categoria):
-    print(f"{categoria.id} - {categoria.nome}\t| Limite: {categoria.moeda}{categoria.limite}\t| Saldo: {categoria.moeda}{categoria.saldo}")
+def entrada_categoria(categoria=None):
     try:
         nome = input("Nome da categoria: ")
         if nome == "":
             raise Campo_Vazio
         limite = float(input("Limite: "))
         if limite <= 0:
+            raise Valor_Incorreto
+        saldo = float(input("Saldo: "))
+        if saldo < 0:
             raise Valor_Incorreto
     except Campo_Vazio:
         print("Campo Obrigatorio. Tente Novamente.")
@@ -67,40 +58,34 @@ def atualizar_categoria(categoria):
     except Valor_Incorreto:
         print("Valor Deve ser Maior que 0. Tente Novamente.")
     else:
-        categoria.nome = nome.upper()
-        categoria.limite = limite
+        if categoria:
+            categoria.nome = nome.upper()
+            categoria.limite = limite
+            categoria.saldo = saldo
+            mensagem = "Atualizado com Sucesso."
+        else:
+            categoria = Categoria(
+                nome=nome, 
+                limite=limite
+            )
+            categoria.saldo = saldo
+            session.add(categoria)
+            mensagem = "Cadastro com Sucesso."
         session.commit()
-        print("Atualizado com Sucesso.")
+        print(mensagem)
     finally:
         sair = input("Pressione Qualquer Tecla Para Voltar...")
 
-def adicionar_pagamento(nome, valor, data, forma_pagamento, usuario_id, categoria_id):
-    pagamento = Pagamento(
-        nome=nome,
-        valor=valor,
-        data=data,
-        forma_pagamento=forma_pagamento,
-        conta_id=usuario_id,
-        categoria_id=categoria_id
-    )
-    session.add(pagamento)
-    session.commit()
-    pagamento = session.query(Pagamento).get(pagamento.id)
-    if pagamento is not None:
-        pagamento.transacao()
-    session.commit()
-    return pagamento
-
-def atualizar_pagamento(pagamento):
-    print(f"{pagamento.id} - {pagamento.nome}\t| Conta: {pagamento.conta_id}\t| Categoria: {pagamento.categoria_id}\t| Valor: {pagamento.moeda}{pagamento.valor}\t| Forma: {pagamento.forma_pagamento}")
+def entrada_pagamento(pagamento=None):
     try:
         nome = input("Nome do pagamento: ")
         forma = input("Forma de pagamento: ")
         if nome == "" or forma == "":
             raise Campo_Vazio
-        valor = float(input("Valor: "))
-        if valor <= 0:
-            raise Valor_Incorreto
+        if not pagamento:
+            valor = float(input("Valor: "))
+            if valor <= 0:
+                raise Valor_Incorreto
         data = input("Data (DD/MM/AAAA): ")
         try:
             data = datetime.strptime(data, "%d/%m/%Y")
@@ -125,43 +110,43 @@ def atualizar_pagamento(pagamento):
     except Data_Incorreta:
         print("Data Invalida. Tente Novamente.")
     else:
-        pagamento.nome = nome.upper()
-        pagamento.valor = valor
-        pagamento.forma = forma.upper()
-        pagamento.data = data
-        pagamento.usuario_id = usuario
-        pagamento.categoria_id = categoria
+        if pagamento:
+            pagamento.nome = nome.upper()
+            pagamento.forma = forma.upper()
+            pagamento.data = data
+            pagamento.usuario_id = usuario
+            pagamento.categoria_id = categoria
+            mensagem = "Atualizado com Sucesso."
+        else:
+            pagamento = Pagamento(
+                nome=nome.upper(),
+                valor=valor,
+                data=data,
+                forma_pagamento=forma.upper(),
+                conta_id=usuario_id,
+                categoria_id=categoria_id
+            )
+            session.add(pagamento)
+            pagamento = session.query(Pagamento).get(pagamento.id)
+            print(pagamento)
+            if pagamento is not None:
+                pagamento.transacao()
+            mensagem = "Cadastro com Sucesso."
         session.commit()
-        print("Atualizado com Sucesso.")
+        print(mensagem)
     finally:
         sair = input("Pressione Qualquer Tecla Para Voltar...")
 
-def adicionar_provento(nome, valor, data, fonte, usuario_id):
-    provento = Provento(
-        nome=nome,
-        valor=valor,
-        data=data,
-        fonte=fonte,
-        conta_id=usuario_id,
-    )
-    session.add(provento)
-    session.commit()
-    provento = session.query(Provento).get(provento.id)
-    if provento is not None:
-        provento.transacao()
-    session.commit()
-    return provento
-
-def atualizar_provento(provento):
-    print(f"{provento.id} - {provento.nome}\t| Conta: {provento.conta_id}\t| Fonte: {provento.fonte}\t| Valor: {provento.moeda}{provento.valor}")
+def entrada_provento(provento=None):
     try:
         nome = input("Nome do pagamento: ")
         fonte = input("Fonte do Provento: ")
         if nome == "" or fonte == "":
             raise Campo_Vazio
-        valor = float(input("Valor: "))
-        if valor <= 0:
-            raise Valor_Incorreto
+        if not provento:
+            valor = float(input("Valor: "))
+            if valor <= 0:
+                raise Valor_Incorreto
         data = input("Data (DD/MM/AAAA): ")
         try:
             data = datetime.strptime(data, "%d/%m/%Y")
@@ -182,30 +167,31 @@ def atualizar_provento(provento):
     except Data_Incorreta:
         print("Data Invalida. Tente Novamente.")
     else:
-        provento.nome = nome.upper()
-        provento.fonte = fonte.upper()
-        provento.valor = valor
-        provento.data = data
-        provento.usuario_id = usuario
+        if provento:
+            provento.nome = nome.upper()
+            provento.fonte = fonte.upper()
+            provento.data = data
+            provento.usuario_id = usuario
+            mensagem = "Atualizado com Sucesso."
+        else:
+            provento = Provento(
+                nome=nome.upper(),
+                valor=valor,
+                data=data,
+                fonte=fonte.upper(),
+                conta_id=usuario_id,
+            )
+            session.add(provento)
+            provento = session.query(Provento).get(provento.id)
+            if provento is not None:
+                provento.transacao()
+            mensagem = "Cadastro com Sucesso."
         session.commit()
-        print("Atualizado com Sucesso.")
+        print(mensagem)
     finally:
         sair = input("Pressione Qualquer Tecla Para Voltar...")
 
-def adicionar_meta(nome, valor, prazo, usuario_id, saldo_inicial=0.0):
-    meta = Meta(
-        nome=nome,
-        valor=valor,
-        prazo = prazo,
-        conta_id=usuario_id
-    )
-    meta.saldo = saldo_inicial
-    session.add(meta)
-    session.commit()
-    return meta
-
-def atualizar_meta(meta):
-    print(f"{meta.id} - {meta.nome}\t| Conta: {meta.conta_id}\t| Valor: {meta.moeda}{meta.valor}\t| Prazo: {meta.prazo}")
+def entrada_meta(meta=None):
     try:
         nome = input("Nome da Meta: ")
         if nome == "":
@@ -236,12 +222,25 @@ def atualizar_meta(meta):
     except Data_Incorreta:
         print("Data Invalida. Tente Novamente.")
     else:
-        meta.nome = nome
-        meta.valor = valor
-        meta.prazo = prazo
-        meta.conta_id = usuario_id
+        if meta:
+            meta.nome = nome.upper()
+            meta.valor = valor
+            meta.prazo = prazo
+            meta.conta_id = usuario_id
+            meta.saldo = saldo
+            mensagem = "Atualizado com Sucesso."
+        else:
+            meta = Meta(
+                nome=nome,
+                valor=valor,
+                prazo = prazo,
+                conta_id=usuario_id
+            )
+            meta.saldo = saldo
+            session.add(meta)
+            mensagem = "Cadastro com Sucesso."
         session.commit()
-        print("Atualizado com Sucesso.")
+        print(mensagem)
     finally:
         sair = input("Pressione Qualquer Tecla Para Voltar...")
 

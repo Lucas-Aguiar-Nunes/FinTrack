@@ -35,7 +35,7 @@ def menu():
     print("Fechando Programa...")
 
 
-def adicionar(): #type: ignore
+def adicionar():
     while True:
         try:
             print("\t\tControle Financeiro")
@@ -50,104 +50,21 @@ def adicionar(): #type: ignore
 
             escolha = input("\nOpção: ")
             if escolha == "1":
-                nome = input("Nome do usuário: ")
-                email = input("Email: ")
-                if nome == "" or email == "":
-                    raise Campo_Vazio
-                if "@" not in email:
-                    raise Email_Invalido
-                saldo = float(input("Saldo inicial: "))
-                if saldo < 0:
-                    raise Valor_Incorreto
-                adicionar_usuario(nome.upper(), email.upper(), saldo)
-                print("Cadastro com Sucesso.")
+                entrada_usuario()
             elif escolha == "2":
-                nome = input("Nome da Meta: ")
-                if nome == "":
-                    raise Campo_Vazio
-                valor = float(input("Valor Desejado: "))
-                if valor <= 0:
-                    raise Valor_Incorreto
-                saldo = float(input("Saldo inicial: "))
-                if saldo <= 0:
-                    raise Valor_Incorreto
-                try:
-                    prazo = datetime.strptime(prazo, "%d/%m/%Y")
-                except ValueError:
-                    raise Data_Incorreta
-                usuario_id = int(input("ID do usuário: "))
-                usuario = session.query(Usuario).filter_by(id=usuario_id).first()
-                if usuario:
-                    raise ID_Incorreto
-                adicionar_meta(nome.upper(), valor, prazo, usuario_id, saldo)
-                print("Cadastro com Sucesso.")
+                entrada_meta()
             elif escolha == "3":
-                nome = input("Nome da categoria: ")
-                if nome == "":
-                    raise Campo_Vazio
-                limite = float(input("Limite: "))
-                if limite <= 0:
-                    raise Valor_Incorreto
-                adicionar_categoria(nome.upper(), limite)
-                print("Cadastro com Sucesso.")
+                entrada_categoria()
             elif escolha == "4":
-                nome = input("Nome do pagamento: ")
-                forma = input("Forma de pagamento: ")
-                if nome == "" or forma == "":
-                    raise Campo_Vazio
-                valor = float(input("Valor: "))
-                if valor <= 0:
-                    raise Valor_Incorreto
-                data = input("Data (DD/MM/AAAA): ")
-                try:
-                    data = datetime.strptime(data, "%d/%m/%Y")
-                except ValueError:
-                    raise Data_Incorreta
-                usuario_id = int(input("ID do usuário: "))
-                usuario = session.query(Usuario).filter_by(id=usuario_id).first()
-                if not usuario:
-                    raise ID_Incorreto
-                categoria_id = int(input("ID da categoria: "))
-                categoria = session.query(Categoria).filter_by(id=categoria_id).first()
-                if not categoria:
-                    raise ID_Incorreto
-                adicionar_pagamento(nome.upper(), valor, data, forma.upper(), usuario_id, categoria_id)
-                print("Cadastro com Sucesso.")
+                entrada_pagamento()
             elif escolha == "5":
-                nome = input("Nome do provento: ")
-                fonte = input("Fonte do Provento: ")
-                if nome == "" or fonte == "":
-                    raise Campo_Vazio
-                valor = float(input("Valor: "))
-                if valor <= 0:
-                    raise Valor_Incorreto
-                data = input("Data (DD/MM/AAAA): ")
-                try:
-                    data = datetime.strptime(data, "%d/%m/%Y")
-                except ValueError:
-                    raise Data_Incorreta
-                usuario_id = int(input("ID do usuário: "))
-                usuario = session.query(Usuario).filter_by(id=usuario_id).first()
-                if not usuario:
-                    raise ID_Incorreto
-                adicionar_provento(nome.upper(), valor, data, fonte.upper(), usuario_id)
-                print("Cadastro com Sucesso.")
+                entrada_provento()
             elif escolha == "0":
                 print("Voltando para Menu Principal")
             else:
                 raise Escolha_Menu_Incorreta
         except Escolha_Menu_Incorreta:
             print(('Opção inválida. Tente Novamente.'))
-        except Campo_Vazio:
-            print("Campo Obrigatorio. Tente Novamente.")
-        except Email_Invalido:
-            print("Email Invalido. Tente Novamente.")
-        except ValueError:
-            print("Valor Deve ser Numerico. Tente Novamente.")
-        except Valor_Incorreto:
-            print("Valor Deve ser Maior que 0. Tente Novamente.")
-        except Data_Incorreta:
-            print("Data Invalida. Tente Novamente.")
         except ID_Incorreto:
             print("ID não Encontrado. Tente Novamente")
         else:
@@ -218,35 +135,40 @@ def atualizar():
                 id = int(input("Informe o ID do Usuário: "))
                 usuario = session.query(Usuario).filter_by(id=id).first()
                 if usuario:
-                    atualizar_usuario(usuario)
+                    print(f"{usuario.id} - {usuario.nome}\t| Email: {usuario.email}\t| Saldo: {usuario.moeda}{usuario.saldo}")
+                    entrada_usuario(usuario)
                 else:
                     raise ID_Incorreto
             elif escolha == "2":
                 id = int(input("Informe o ID da Meta: "))
                 meta = session.query(Meta).filter_by(id=id).first()
                 if meta:
-                    atualizar_meta(meta)
+                    print(f"{meta.id} - {meta.nome}\t| Conta: {meta.conta_id}\t| Valor: {meta.moeda}{meta.valor}\t| Prazo: {meta.prazo}")
+                    entrada_meta(meta)
                 else:
                     raise ID_Incorreto
             elif escolha == "3":
                 id = int(input("Informe o ID da Categoria: "))
                 categoria = session.query(Categoria).filter_by(id=id).first()
                 if categoria:
-                    atualizar_categoria(categoria)
+                    print(f"{categoria.id} - {categoria.nome}\t| Limite: {categoria.moeda}{categoria.limite}\t| Saldo: {categoria.moeda}{categoria.saldo}")
+                    entrada_categoria(categoria)
                 else:
                     raise ID_Incorreto
             elif escolha == "4":
                 id = int(input("Informe o ID do Pagamento: "))
                 pagamento = session.query(Pagamento).filter_by(id=id).first()
                 if pagamento:
-                    atualizar_pagamento(pagamento)
+                    print(f"{pagamento.id} - {pagamento.nome}\t| Conta: {pagamento.conta_id}\t| Categoria: {pagamento.categoria_id}\t| Valor: {pagamento.moeda}{pagamento.valor}\t| Forma: {pagamento.forma_pagamento}")
+                    entrada_pagamento(pagamento)
                 else:
                     raise ID_Incorreto
             elif escolha == "5":
                 id = int(input("Informe o ID do Provento: "))
                 provento = session.query(Provento).filter_by(id=id).first()
                 if provento:
-                    atualizar_provento(provento)
+                    print(f"{provento.id} - {provento.nome}\t| Conta: {provento.conta_id}\t| Fonte: {provento.fonte}\t| Valor: {provento.moeda}{provento.valor}")
+                    entrada_provento(provento)
                 else:
                     raise ID_Incorreto
             elif escolha == "0":
