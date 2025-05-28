@@ -78,10 +78,12 @@ class Pagamento(Transacao):
 
     forma_pagamento = Column(String, nullable=False)
     conta_id = Column(Integer, ForeignKey('usuarios.id'), nullable=False)
-    categoria_id = Column(Integer, ForeignKey('categorias.id'), nullable=False)  
+    categoria_id = Column(Integer, ForeignKey('categorias.id'), nullable=True)
+    meta_id = Column(Integer, ForeignKey('metas.id'), nullable=True)
 
     usuario = relationship('Usuario', back_populates='pagamentos')
     categoria = relationship('Categoria', back_populates='pagamentos')
+    meta = relationship('Meta', back_populates='pagamentos')
 
     def transacao(self):
         try:
@@ -91,7 +93,10 @@ class Pagamento(Transacao):
             print("Valor Deve ser Menor que o Saldo Disponível. Tente Novamente")
         else:
             self.usuario.saldo -= self.valor
-            self.categoria.saldo += self.valor
+            if self.categoria_id is not None: 
+                self.categoria.saldo += self.valor
+            else:
+                self.meta.saldo += self.valor
             return True
 
 
@@ -121,6 +126,7 @@ class Meta(Base):
     conta_id = Column(Integer, ForeignKey('usuarios.id'), nullable=False)
 
     usuario = relationship('Usuario', back_populates='metas')
+    pagamentos = relationship('Pagamento', back_populates='meta')
 
     @property
     def saldo(self):

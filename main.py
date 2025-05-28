@@ -92,7 +92,7 @@ def consultar():
             elif escolha == "2":
                 metas = listar_metas()
                 for m in metas:
-                    print(f"{m.id} - {m.nome}\t| Conta: {m.conta_id}\t| Valor: {m.moeda}{m.valor}\t| Prazo: {m.prazo}")
+                    print(f"{m.id} - {m.nome}\t| Conta: {m.conta_id}\t| Valor: {m.moeda}{m.valor}\t| Saldo: {m.moeda}{m.saldo}\t Prazo: {m.prazo}")
             elif escolha == "3":
                 categorias = listar_categorias()
                 for c in categorias:
@@ -142,7 +142,7 @@ def atualizar():
                 id = int(input("Informe o ID da Meta: "))
                 meta = session.query(Meta).filter_by(id=id).first()
                 if meta:
-                    print(f"{meta.id} - {meta.nome}\t| Conta: {meta.conta_id}\t| Valor: {meta.moeda}{meta.valor}\t| Prazo: {meta.prazo}")
+                    print(f"{meta.id} - {meta.nome}\t| Conta: {meta.conta_id}\t| Valor: {meta.moeda}{meta.valor}\t| Saldo: {meta.moeda}{meta.saldo}\t Prazo: {meta.prazo}")
                     entrada_meta(meta)
                 else:
                     raise ID_Incorreto

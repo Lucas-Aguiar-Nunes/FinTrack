@@ -121,8 +121,11 @@ def entrada_pagamento(pagamento=None):
             pagamento.nome = nome.upper()
             pagamento.forma_pagamento = forma.upper()
             pagamento.data = data
-            pagamento.usuario_id = usuario
-            pagamento.categoria_id = categoria
+            pagamento.usuario_id = usuario.id
+            if categoria_id:
+                pagamento.categoria_id = categoria.id
+            else:
+                pagamento.meta_id = meta.id
             mensagem = "Atualizado com Sucesso."
         else:
             pagamento = Pagamento(
@@ -130,10 +133,13 @@ def entrada_pagamento(pagamento=None):
                 valor=valor,
                 data=data,
                 forma_pagamento=forma.upper(),
-                conta_id=usuario_id,
-                categoria_id=categoria_id
+                conta_id=usuario.id,
             )
             session.add(pagamento)
+            if escolha.upper() == "G":
+                pagamento.categoria_id = categoria.id
+            else:
+                pagamento.meta_id = meta.id
             session.commit()
             if pagamento.transacao():
                 mensagem = "Cadastro com Sucesso."
@@ -178,7 +184,7 @@ def entrada_provento(provento=None):
             provento.nome = nome.upper()
             provento.fonte = fonte.upper()
             provento.data = data
-            provento.usuario_id = usuario
+            provento.usuario_id = usuario.id
             mensagem = "Atualizado com Sucesso."
         else:
             provento = Provento(
@@ -186,7 +192,7 @@ def entrada_provento(provento=None):
                 valor=valor,
                 data=data,
                 fonte=fonte.upper(),
-                conta_id=usuario_id,
+                conta_id=usuario.id,
             )
             session.add(provento)
             session.commit()
@@ -208,7 +214,7 @@ def entrada_meta(meta=None):
         if valor <= 0:
             raise Valor_Incorreto
         saldo = float(input("Saldo: "))
-        if saldo <= 0:
+        if saldo < 0:
             raise Valor_Incorreto
         prazo = input("Data (DD/MM/AAAA): ")
         try:
@@ -234,7 +240,7 @@ def entrada_meta(meta=None):
             meta.nome = nome.upper()
             meta.valor = valor
             meta.prazo = prazo
-            meta.conta_id = usuario_id
+            meta.conta_id = usuario.id
             meta.saldo = saldo
             mensagem = "Atualizado com Sucesso."
         else:
@@ -242,7 +248,7 @@ def entrada_meta(meta=None):
                 nome=nome,
                 valor=valor,
                 prazo = prazo,
-                conta_id=usuario_id
+                conta_id=usuario.id
             )
             meta.saldo = saldo
             session.add(meta)
