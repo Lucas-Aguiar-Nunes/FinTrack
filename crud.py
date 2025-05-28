@@ -37,8 +37,6 @@ def entrada_usuario(usuario=None):
             mensagem = "Cadastro com Sucesso."
         session.commit()
         print(mensagem)
-    finally:
-        sair = input("Pressione Qualquer Tecla Para Voltar...")
 
 def entrada_categoria(categoria=None):
     try:
@@ -73,8 +71,6 @@ def entrada_categoria(categoria=None):
             mensagem = "Cadastro com Sucesso."
         session.commit()
         print(mensagem)
-    finally:
-        sair = input("Pressione Qualquer Tecla Para Voltar...")
 
 def entrada_pagamento(pagamento=None):
     try:
@@ -112,7 +108,7 @@ def entrada_pagamento(pagamento=None):
     else:
         if pagamento:
             pagamento.nome = nome.upper()
-            pagamento.forma = forma.upper()
+            pagamento.forma_pagamento = forma.upper()
             pagamento.data = data
             pagamento.usuario_id = usuario
             pagamento.categoria_id = categoria
@@ -127,15 +123,12 @@ def entrada_pagamento(pagamento=None):
                 categoria_id=categoria_id
             )
             session.add(pagamento)
-            pagamento = session.query(Pagamento).get(pagamento.id)
-            print(pagamento)
-            if pagamento is not None:
-                pagamento.transacao()
+            session.commit()
+            pagamento = session.get(Pagamento, pagamento.id)
+            pagamento.transacao()
             mensagem = "Cadastro com Sucesso."
         session.commit()
         print(mensagem)
-    finally:
-        sair = input("Pressione Qualquer Tecla Para Voltar...")
 
 def entrada_provento(provento=None):
     try:
@@ -182,14 +175,12 @@ def entrada_provento(provento=None):
                 conta_id=usuario_id,
             )
             session.add(provento)
-            provento = session.query(Provento).get(provento.id)
-            if provento is not None:
-                provento.transacao()
+            session.commit()
+            provento = session.get(Provento, provento.id)
+            provento.transacao()
             mensagem = "Cadastro com Sucesso."
         session.commit()
         print(mensagem)
-    finally:
-        sair = input("Pressione Qualquer Tecla Para Voltar...")
 
 def entrada_meta(meta=None):
     try:
@@ -241,8 +232,6 @@ def entrada_meta(meta=None):
             mensagem = "Cadastro com Sucesso."
         session.commit()
         print(mensagem)
-    finally:
-        sair = input("Pressione Qualquer Tecla Para Voltar...")
 
 def listar_usuarios():
     return session.query(Usuario).all()
