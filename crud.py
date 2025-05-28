@@ -91,10 +91,19 @@ def entrada_pagamento(pagamento=None):
         usuario = session.query(Usuario).filter_by(id=usuario_id).first()
         if not usuario:
             raise ID_Incorreto
-        categoria_id = int(input("ID da categoria: "))
-        categoria = session.query(Categoria).filter_by(id=categoria_id).first()
-        if not categoria:
-            raise ID_Incorreto        
+        escolha = input("Digite [G] para Gasto em Categoria ou [E] para Investimento em Meta: ")
+        if escolha.upper() == "G":
+            categoria_id = int(input("ID da categoria: "))
+            categoria = session.query(Categoria).filter_by(id=categoria_id).first()
+            if not categoria:
+                raise ID_Incorreto
+        elif escolha.upper() == "E":
+            meta_id = int(input("ID da meta: "))
+            meta = session.query(Meta).filter_by(id=meta_id).first()
+            if not meta:
+                raise ID_Incorreto
+        else:
+            raise Escolha_Menu_Incorreta
     except Campo_Vazio:
         print("Campo Obrigatorio. Tente Novamente.")
     except ValueError:
@@ -105,6 +114,8 @@ def entrada_pagamento(pagamento=None):
         print("ID não Encontrado. Tente Novamente")
     except Data_Incorreta:
         print("Data Invalida. Tente Novamente.")
+    except Escolha_Menu_Incorreta:
+        print('Opção inválida. Tente Novamente.')
     else:
         if pagamento:
             pagamento.nome = nome.upper()
