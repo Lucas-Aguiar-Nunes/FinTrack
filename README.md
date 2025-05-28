@@ -13,10 +13,10 @@
 
 <p align="center">
     <a href="#sobre">Sobre</a> •
-    <a href="#grupo">Grupo</a> •
+    <a href="#grupo">Integrantes</a> •
     <a href="#requisitos">Requisitos</a> •
     <a href="#diagrama">Entidades</a> •
-    <a href="#how-it-works">Interface e Funcionamento</a>
+    <a href="#how-it-works">Funcionamento</a>
 </p>
 
 <h2 id="sobre" align="center">Sobre</h2>
