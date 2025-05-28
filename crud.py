@@ -257,16 +257,36 @@ def entrada_meta(meta=None):
         print(mensagem)
 
 def listar_usuarios():
-    return session.query(Usuario).all()
+    usuarios = session.query(Usuario).all()
+    if usuarios == []:
+        print("Nenhum Dado Cadastrado")
+    for u in usuarios:
+        print(f"{u.id} - {u.nome}\t| Email: {u.email}\t| Saldo: {u.moeda}{u.saldo}")
 
 def listar_categorias():
-    return session.query(Categoria).all()
+    categorias = session.query(Categoria).all()
+    if categorias == []:
+        print("Nenhum Dado Cadastrado")
+    for c in categorias:
+        print(f"{c.id} - {c.nome}\t| Limite: {c.moeda}{c.limite}\t| Saldo: {c.moeda}{c.saldo}")
 
 def listar_pagamentos():
-    return session.query(Pagamento).all()
+    pagamentos = session.query(Pagamento).all()
+    if pagamentos == []:
+        print("Nenhum Dado Cadastrado")
+    for p in pagamentos:
+        print(f"{p.id} - {p.nome}\t| Conta: {p.conta_id}\t| Categoria: {p.categoria_id}\t| Valor: {p.moeda}{p.valor}\t| Forma: {p.forma_pagamento}")
 
 def listar_proventos():
-    return session.query(Provento).all()
+    proventos = session.query(Provento).all()
+    if proventos == []:
+        print("Nenhum Dado Cadastrado")
+    for p in proventos:
+        print(f"{p.id} - {p.nome}\t| Conta: {p.conta_id}\t| Fonte: {p.fonte}\t| Valor: {p.moeda}{p.valor}")
 
 def listar_metas():
-    return session.query(Meta).all()
+    metas = session.query(Meta).all()
+    if metas == []:
+        print("Nenhum Dado Cadastrado")
+    for m in metas:
+        print(f"{m.id} - {m.nome}\t| Conta: {m.conta_id}\t| Valor: {m.moeda}{m.valor}\t| Saldo: {m.moeda}{m.saldo}\t Prazo: {m.prazo}")

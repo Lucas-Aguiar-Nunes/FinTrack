@@ -54,6 +54,17 @@ class Categoria(Base):
     def alterar_moeda(cls, moeda):
         cls.moeda = moeda
 
+    def verifica_limite(self):
+        if self.saldo > self.limite: # type: ignore
+            print("Ultrapassou o Limite de Gasto")
+        elif self.saldo == self.limite: # type: ignore
+            print("Atingiu o Limite de Gasto")
+        elif self.saldo >= (self.limite*0.9):   # type: ignore
+            print("Atingiu 90% do Limite de Gasto")
+        elif self.saldo >= (self.limite*0.8):   # type: ignore
+            print("Atingiu 80% do Limite de Gasto")
+        elif self.saldo >= (self.limite*0.5):   # type: ignore
+            print("Atingiu 50% do Limite de Gasto")    
 
 class Transacao(Base):
     __abstract__ = True
@@ -95,8 +106,10 @@ class Pagamento(Transacao):
             self.usuario.saldo -= self.valor
             if self.categoria_id is not None: 
                 self.categoria.saldo += self.valor
+                self.categoria.verifica_limite()
             else:
                 self.meta.saldo += self.valor
+                self.meta.verifica_meta()
             return True
 
 
@@ -139,6 +152,18 @@ class Meta(Base):
     @classmethod
     def alterar_moeda(cls, moeda):
         cls.moeda = moeda
+
+    def verifica_meta(self):
+        if self.saldo > self.valor: # type: ignore
+            print("Ultrapassou a Meta de Investimento")
+        elif self.saldo == self.valor: # type: ignore
+            print("Atingiu a Meta de Investimento")
+        elif self.saldo >= (self.valor*0.9):   # type: ignore
+            print("Atingiu 90% da Meta de Investimento")
+        elif self.saldo >= (self.valor*0.8):   # type: ignore
+            print("Atingiu 80% da Meta de Investimento")
+        elif self.saldo >= (self.valor*0.5):   # type: ignore
+            print("Atingiu 50% da Meta de Investimento")    
 
 
 engine = create_engine('sqlite:///controlefinanceiro.db', echo=False)

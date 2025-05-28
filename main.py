@@ -86,25 +86,15 @@ def consultar():
 
             escolha = input("\nOpção: ")
             if escolha == "1":
-                usuarios = listar_usuarios()
-                for u in usuarios:
-                    print(f"{u.id} - {u.nome}\t| Email: {u.email}\t| Saldo: {u.moeda}{u.saldo}")
+                listar_usuarios()
             elif escolha == "2":
-                metas = listar_metas()
-                for m in metas:
-                    print(f"{m.id} - {m.nome}\t| Conta: {m.conta_id}\t| Valor: {m.moeda}{m.valor}\t| Saldo: {m.moeda}{m.saldo}\t Prazo: {m.prazo}")
+                listar_metas()
             elif escolha == "3":
-                categorias = listar_categorias()
-                for c in categorias:
-                    print(f"{c.id} - {c.nome}\t| Limite: {c.moeda}{c.limite}\t| Saldo: {c.moeda}{c.saldo}")
+                listar_categorias()
             elif escolha == "4":
-                pagamentos = listar_pagamentos()
-                for p in pagamentos:
-                    print(f"{p.id} - {p.nome}\t| Conta: {p.conta_id}\t| Categoria: {p.categoria_id}\t| Valor: {p.moeda}{p.valor}\t| Forma: {p.forma_pagamento}")
+                listar_pagamentos()
             elif escolha == "5":
-                proventos = listar_proventos()
-                for p in proventos:
-                    print(f"{p.id} - {p.nome}\t| Conta: {p.conta_id}\t| Fonte: {p.fonte}\t| Valor: {p.moeda}{p.valor}")
+                listar_proventos()
             elif escolha == "0":
                 print("Voltando para Menu Principal.")
             else:
