@@ -84,14 +84,15 @@ class Pagamento(Transacao):
     categoria = relationship('Categoria', back_populates='pagamentos')
 
     def transacao(self):
-        if self.valor < 0: #type:ignore
-            raise ValueError("Valor deve ser positivo.")
-        if self.usuario is None or self.categoria is None:
-            raise ValueError("Usuário ou categoria não vinculados corretamente.")
-        if self.valor > self.usuario.saldo:
-            raise ValueError("Valor deve ser menor que o saldo disponível.")
-        self.usuario.saldo -= self.valor
-        self.categoria.saldo += self.valor
+        try:
+            if self.valor > self.usuario.saldo:
+                raise ValueError
+        except ValueError:
+            print("Valor Deve ser Menor que o Saldo Disponível. Tente Novamente")
+        else:
+            self.usuario.saldo -= self.valor
+            self.categoria.saldo += self.valor
+            return True
 
 
 class Provento(Transacao):
@@ -103,11 +104,8 @@ class Provento(Transacao):
     usuario = relationship('Usuario', back_populates='proventos')
 
     def transacao(self):
-        if self.valor < 0: #type:ignore
-            raise ValueError("Valor deve ser positivo.")
-        if self.usuario is None:
-            raise ValueError("Usuário não vinculado corretamente.")
         self.usuario.saldo += self.valor
+        return True
 
 
 class Meta(Base):

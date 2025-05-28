@@ -124,11 +124,14 @@ def entrada_pagamento(pagamento=None):
             )
             session.add(pagamento)
             session.commit()
-            pagamento = session.get(Pagamento, pagamento.id)
-            pagamento.transacao()
-            mensagem = "Cadastro com Sucesso."
+            if pagamento.transacao():
+                mensagem = "Cadastro com Sucesso."
+            else:
+                session.delete(pagamento)
+                mensagem = ""
         session.commit()
-        print(mensagem)
+        if mensagem != "":
+            print(mensagem)
 
 def entrada_provento(provento=None):
     try:
@@ -176,11 +179,14 @@ def entrada_provento(provento=None):
             )
             session.add(provento)
             session.commit()
-            provento = session.get(Provento, provento.id)
-            provento.transacao()
-            mensagem = "Cadastro com Sucesso."
-        session.commit()
+            if provento.transacao():
+                mensagem = "Cadastro com Sucesso."
+            else:
+                session.delete(provento)
+                mensagem = ""
         print(mensagem)
+        session.commit()
+
 
 def entrada_meta(meta=None):
     try:
