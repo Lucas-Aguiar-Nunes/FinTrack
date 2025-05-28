@@ -30,10 +30,9 @@ def menu():
             else:
                 raise Escolha_Menu_Incorreta
         except Escolha_Menu_Incorreta:
-            print(('Opção inválida. Tente novamente.'))
+            print('Opção inválida. Tente novamente.')
             sair = input("Pressione Qualquer Tecla Para Voltar...")
     print("Fechando Programa...")
-
 
 def adicionar():
     while True:
@@ -64,7 +63,7 @@ def adicionar():
             else:
                 raise Escolha_Menu_Incorreta
         except Escolha_Menu_Incorreta:
-            print(('Opção inválida. Tente Novamente.'))
+            print('Opção inválida. Tente Novamente.')
         except ID_Incorreto:
             print("ID não Encontrado. Tente Novamente")
         else:
@@ -111,7 +110,7 @@ def consultar():
             else:
                 raise Escolha_Menu_Incorreta
         except Escolha_Menu_Incorreta:
-            print(('Opção inválida. Tente Novamente.'))
+            print('Opção inválida. Tente Novamente.')
         else:
             break
         finally:
@@ -176,7 +175,7 @@ def atualizar():
             else:
                 raise Escolha_Menu_Incorreta
         except Escolha_Menu_Incorreta:
-            print(('Opção inválida. Tente Novamente.'))
+            print('Opção inválida. Tente Novamente.')
         except ID_Incorreto:
             print("ID não Encontrado. Tente Novamente")
         else:
@@ -248,7 +247,7 @@ def deletar():
             else:
                 raise Escolha_Menu_Incorreta
         except Escolha_Menu_Incorreta:
-            print(('Opção inválida. Tente Novamente.'))
+            print('Opção inválida. Tente Novamente.')
         except ID_Incorreto:
             print("ID não Encontrado. Tente Novamente")
         except ValueError:
