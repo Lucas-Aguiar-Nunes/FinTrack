@@ -35,12 +35,6 @@ O FinTrack é um sistema de controle financeiro onde o usuário poderá realizar
         <a href="https://github.com/ErickXr" target="_blank"><img title="Siga-Me" src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="Perfil GitHub"/></a>
     </td>
     <td align="center">
-      <img src="https://media.licdn.com/dms/image/v2/D4D35AQGsDRT2-i2P3w/profile-framedphoto-shrink_800_800/B4DZjT_bE1GkAg-/0/1755903275706?e=1758765600&v=beta&t=Nf_-BvwZOHRTRn-yq-H2IVusyIsNVRRwVhIa67M77js" width="100" alt="Foto"/><br>
-      <b>Gustavo Silva Ferreira</b><br><br>
-        <a href="https://www.linkedin.com/in/gustavo-silva-15b681275/" target="_blank"><img title="Conecte-se" src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="Perfil Linkedin"/></a>
-        <a href="" target="_blank"><img title="Siga-Me" src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="Perfil GitHub"/></a>
-    </td>
-    <td align="center">
       <img src="https://github.com/Jloren051.png" width="100" alt="Foto"/><br>
       <b>Julia Lourenço Nogueira</b><br><br>
         <a href="https://www.linkedin.com/in/julia-louren%C3%A7o-8065082ba/" target="_blank"><img title="Conecte-se" src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="Perfil Linkedin"/></a>
